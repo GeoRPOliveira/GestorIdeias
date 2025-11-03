@@ -1,0 +1,15 @@
+<div class="listIdeas">
+  <h1>Ideias</h1>
+  <a href="/ideas/create">Criar nova ideia</a>
+
+  <ul>
+    {{#each ideas}}
+      <li>
+        <a href="/ideas/{{this._id}}">
+          <strong>{{this.titulo}}</strong> - {{this.categoria}} <br>
+          Autor: {{this.autor.username}}
+        </a>
+      </li>
+    {{/each}}
+  </ul>
+</div>
