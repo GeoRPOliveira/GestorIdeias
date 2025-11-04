@@ -1,11 +1,11 @@
 import User from "../models/User.js";
-import bcrypt from "bcryptjs";        // Para hash de senha
+import bcrypt from "bcryptjs";
 
 const authController = {
   // Registrar novo usuário
   async register(req, res) {
     try {
-      const { nome, username, email, password } = req.body;
+      const { name, username, email, password } = req.body;
 
       // Verifica se usuário ou email já existe
       const existingUser = await User.findOne({ $or: [{ email }, { username }] });
@@ -15,13 +15,19 @@ const authController = {
 
       // Cria hash da senha
       const salt = await bcrypt.genSalt(10);
-      const senhaHash = await bcrypt.hash(password, salt);
+      const passwordHash = await bcrypt.hash(password, salt);
 
       // Cria novo usuário
-      const newUser = new User({ nome, username, email, senhaHash });
+      const newUser = new User({
+        name,
+        username,
+        email,
+        passwordHash,
+        createdAt: Date.now(),
+      });
+
       await newUser.save();
 
-      // Redireciona para /ideas após registro
       res.redirect("/ideas");
     } catch (err) {
       console.error(err);
@@ -34,19 +40,16 @@ const authController = {
     try {
       const { email, password } = req.body;
 
-      // Verifica se o usuário existe
       const user = await User.findOne({ email });
       if (!user) {
         return res.status(400).send("Email ou senha incorretos.");
       }
 
-      // Verifica a senha
-      const isMatch = await bcrypt.compare(password, user.senhaHash);
+      const isMatch = await bcrypt.compare(password, user.passwordHash);
       if (!isMatch) {
         return res.status(400).send("Email ou senha incorretos.");
       }
 
-      // Redireciona para /ideas após login
       res.redirect("/ideas");
     } catch (err) {
       console.error(err);
