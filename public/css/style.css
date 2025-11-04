@@ -10,7 +10,6 @@
 body {
     display: flex;
     justify-content: center;
-    align-items: center;
     height: 100vh;
     width: 100%;
 }
@@ -23,6 +22,11 @@ form {
     box-shadow: 0 4px 15px rgba(0,0,0,0.2);
     width: 100%;
     max-width: 400px;
+    height: fit-content;
+    display: flex;
+    align-self: center;
+    align-items: center;
+    flex-direction: column;
 }
 
 /* Título */
@@ -44,7 +48,6 @@ input, textarea {
 
 /* Botão */
 button {
-    width: 100%;
     padding: 0.8rem;
     background-color: #001EC5;
     border: none;
@@ -53,6 +56,7 @@ button {
     font-size: 1rem;
     cursor: pointer;
     transition: background 0.3s ease;
+    width: 10rem;
 }
 
 button:hover {
@@ -75,12 +79,34 @@ p a:hover {
     color: #1976D2;
 }
 
-.listIdeas{
-    margin-top: 2rem;
-    padding: 2rem 3rem;
-    border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-    width: 80vw;
-    max-width: 400px;
-    background-color: #70a3d6;
+.listIdeas {
+  margin-top: 2rem;
+  padding: 2rem 3rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+  width: 80vw;
+  height: fit-content;
+  background-color: #70a3d6;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.ideasGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  padding: 0;
+  margin-top: 2rem;
+  list-style: none;
+}
+
+.idea {
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+  background-color: white;
 }
