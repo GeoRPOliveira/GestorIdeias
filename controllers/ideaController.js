@@ -26,7 +26,7 @@ const ideaController = {
         titulo,
         descricao,
         categoria,
-        autor: req.user?._id || null, // usar usuário logado
+        autor: req.user?._id || null,
       });
 
       await newIdea.save();
