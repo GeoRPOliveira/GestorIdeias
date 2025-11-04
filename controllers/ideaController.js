@@ -4,7 +4,8 @@ const ideaController = {
   // Listar todas as ideias
   async showIdeas(req, res) {
     try {
-      const ideas = await Idea.find().populate("autor", "username").sort({ criadoEm: -1 });
+      const ideas = await Idea.find().sort({ createdAt: -1 }).lean();
+      console.log("IDEIAS ENCONTRADAS:", ideas); // DEBUG
       res.render("ideas/list", { ideas });
     } catch (err) {
       console.error(err);
@@ -20,13 +21,13 @@ const ideaController = {
   // Salvar nova ideia
   async saveIdea(req, res) {
     try {
-      const { titulo, descricao, categoria } = req.body;
+      const { title, description, category } = req.body;
 
       const newIdea = new Idea({
-        titulo,
-        descricao,
-        categoria,
-        autor: req.user?._id || null,
+        title,
+        description,
+        category,
+        author: req.user?._id || null,
       });
 
       await newIdea.save();
@@ -41,7 +42,11 @@ const ideaController = {
   async ideaDetails(req, res) {
     try {
       const { id } = req.params;
-      const idea = await Idea.findById(id).populate("autor", "username");
+
+      const idea = await Idea.findById(id)
+        .populate("author", "username")
+        .lean();
+
       if (!idea) return res.status(404).send("Ideia não encontrada");
 
       res.render("ideas/details", { idea });
