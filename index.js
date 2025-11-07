@@ -1,41 +1,48 @@
-// index.js
 import express from "express";
 import exphbs from "express-handlebars";
 import authRoutes from "./routes/authRoutes.js";
 import ideaRoutes from "./routes/ideaRoutes.js";
+import voteRoutes from "./routes/voteRoutes.js";
 import path from "path";
 import { fileURLToPath } from "url";
 import { connectDB } from "./db/conn.js";
 import session from "express-session";
 import dotenv from "dotenv";
+import helmet from "helmet";
+import MongoStore from "connect-mongo";
+import { errorHandler } from "./middlewares/errorHandler.js";
 
 dotenv.config();
-
-const secretSession = process.env.SECRET_SESSION;
-
-app.use(
-  session({
-    secret: secretSession,
-    resave: false,
-    saveUninitialized: false,
-  })
-);
-
-// Configuração do __dirname para ES Modules
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 const app = express();
 const PORT = 3000;
 
-// Middlewares para processar JSON e forms
+const secretSession = process.env.SECRET_SESSION;
+
+app.use(helmet());
+
+app.use(session({
+  secret: secretSession,
+  resave: false,
+  saveUninitialized: false,
+  store: MongoStore.create({
+    mongoUrl: process.env.MONGO_URL,
+    dbName: "idea_manager",
+    collectionName: "sessions"
+  }),
+  cookie: {
+    maxAge: 1000 * 60 * 60 
+  }
+}));
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-// Arquivos estáticos
 app.use(express.static(path.join(__dirname, "public")));
 
-// Configuração do Handlebars
 app.engine(
   "handlebars",
   exphbs.engine({
@@ -46,16 +53,19 @@ app.engine(
 app.set("view engine", "handlebars");
 app.set("views", path.join(__dirname, "views"));
 
-// Rotas
+app.use("/", authRoutes);
 app.use("/ideas", ideaRoutes);
-app.use("/login", authRoutes);
+app.use("/votes", voteRoutes);
 
-// Redireciona raiz para login
 app.get("/", (req, res) => res.redirect("/login"));
+
+import { errorHandler } from "./middlewares/errorHandler.js";
+
+app.use(errorHandler);
+
 
 connectDB();
 
-// Inicia servidor
 app.listen(PORT, () => {
   console.log(`Servidor rodando em http://localhost:${PORT}`);
 });

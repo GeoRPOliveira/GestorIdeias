@@ -1,13 +1,14 @@
 import mongoose from "mongoose";
 
 const ideaSchema = new mongoose.Schema({
-  titulo: { type: String, required: true },
-  descricao: { type: String, required: true },
-  categoria: { type: String, required: true },
-  autor: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
-  criadoEm: { type: Date, default: Date.now },
-  atualizadoEm: { type: Date, default: Date.now },
+  title: { type: String, required: true },
+  description: { type: String, required: true },
+  category: { type: String, required: true },
+  createdAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date, default: Date.now },
+  votes: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+  createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
 });
 
-const Idea = mongoose.model("ideas", ideaSchema);
+const Idea = mongoose.model("Idea", ideaSchema);
 export default Idea;
