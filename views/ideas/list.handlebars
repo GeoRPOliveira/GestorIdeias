@@ -1,14 +1,21 @@
 <div class="listIdeas">
-  <div class="header">
-    <h1>Ideias</h1>
-    <a href="/ideas/create"><button>Criar nova ideia</button></a>
-  </div>
-
   <ul class="ideasGrid">
     {{#each ideas}}
-      <li class="idea">
-        <strong>{{this.title}}</strong> - {{this.category}} <br>
+      <li class="ideaCard">
+        <h3>{{this.title}}</h3>
+        <hr />
         <p>{{this.description}}</p>
+        <div class="info">
+          <div class="vote">
+            <img src="images/like.svg" alt="like">
+            Gostei
+            <img src="images/dislike.svg" alt="dislike">
+            Não gostei  
+          </div>
+          <div class="category">
+            {{this.category}}
+          </div>
+        </div>
       </li>
     {{/each}}
   </ul>

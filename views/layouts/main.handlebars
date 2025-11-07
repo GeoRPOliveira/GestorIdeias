@@ -7,6 +7,23 @@
   <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-  {{{body}}} <!-- O conteúdo das views será injetado aqui -->
+  <header>
+    <div class="divHeader">
+      <img src="images/logoInstituto.svg" alt="Logo Instituto">
+      <div>
+        <div>
+          <h3>{{user.name}}</h3>
+          <p>{{user.username}}</p>
+        </div>
+        <img src="images/person.svg" alt="person" id="person">
+      </div>
+    </div>
+    <div class="divTitle">
+      <h1>Gestor de Ideias</h1>
+    </div>
+  </header>
+  <main>
+    {{{body}}} <!-- O conteúdo das views será injetado aqui -->
+  </main>
 </body>
 </html>

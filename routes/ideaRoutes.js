@@ -15,4 +15,6 @@ router.post("/create", ideaController.saveIdea);
 // Detalhes de uma ideia específica
 router.get("/:id", ideaController.ideaDetails);
 
+router.get("", ideaController.showIdeas)
+
 export default router;
