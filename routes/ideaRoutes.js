@@ -21,4 +21,6 @@ router.post("/:id/edit", isLoggedIn, isAuthor, ideaController.updateIdea);
 
 router.post("/:id/delete", isLoggedIn, isAuthor, ideaController.deleteIdea);
 
+router.get("", ideaController.showIdeas)
+
 export default router;
