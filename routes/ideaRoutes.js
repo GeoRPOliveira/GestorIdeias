@@ -1,19 +1,25 @@
 import express from "express";
 import ideaController from "../controllers/ideaController.js";
+import { isLoggedIn } from "../middlewares/isLoggedIn.js";
+import { isAuthor } from "../middlewares/isAuthor.js";
 
 const router = express.Router();
 
-// Listar todas as ideias
-router.get("/", ideaController.showIdeas);
+router.get("/new", isLoggedIn, (req, res) => res.render("ideas/new"));
 
-// Página de criação de nova ideia
-router.get("/create", ideaController.createIdea);
+router.get("/", isLoggedIn, ideaController.showIdeas);
 
-// Receber os dados do formulário e salvar a ideia
-router.post("/create", ideaController.saveIdea);
+router.get("/create", isLoggedIn, ideaController.createIdea);
 
-// Detalhes de uma ideia específica
-router.get("/:id", ideaController.ideaDetails);
+router.post("/create", isLoggedIn, ideaController.saveIdea);
+
+router.get("/:id", isLoggedIn, ideaController.ideaDetails);
+
+router.get("/:id/edit", isLoggedIn, isAuthor, ideaController.editIdea);
+
+router.post("/:id/edit", isLoggedIn, isAuthor, ideaController.updateIdea);
+
+router.post("/:id/delete", isLoggedIn, isAuthor, ideaController.deleteIdea);
 
 router.get("", ideaController.showIdeas)
 

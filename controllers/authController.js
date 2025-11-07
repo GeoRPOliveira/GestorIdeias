@@ -50,12 +50,20 @@ const authController = {
         return res.status(400).send("Email ou senha incorretos.");
       }
 
+      req.session.userId = user._id;
+
       res.redirect("/ideas");
     } catch (err) {
       console.error(err);
       res.status(500).send("Erro ao fazer login.");
     }
   },
+
+  logout(req, res) {
+    req.session.destroy(() => {
+      res.redirect("/login");
+    });
+  }
 };
 
 export default authController;
