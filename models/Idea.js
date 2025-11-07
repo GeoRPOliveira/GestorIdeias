@@ -6,7 +6,9 @@ const ideaSchema = new mongoose.Schema({
   category: { type: String, required: true },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
+  votes: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+  createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
 });
 
-const Idea = mongoose.model("ideas", ideaSchema);
+const Idea = mongoose.model("Idea", ideaSchema);
 export default Idea;

@@ -1,47 +1,71 @@
-  // index.js
-  import express from "express";
-  import exphbs from "express-handlebars";
-  import authRoutes from "./routes/authRoutes.js";
-  import ideaRoutes from "./routes/ideaRoutes.js";
-  import path from "path";
-  import { fileURLToPath } from "url";
-  import { connectDB } from "./db/conn.js";
+import express from "express";
+import exphbs from "express-handlebars";
+import authRoutes from "./routes/authRoutes.js";
+import ideaRoutes from "./routes/ideaRoutes.js";
+import voteRoutes from "./routes/voteRoutes.js";
+import path from "path";
+import { fileURLToPath } from "url";
+import { connectDB } from "./db/conn.js";
+import session from "express-session";
+import dotenv from "dotenv";
+import helmet from "helmet";
+import MongoStore from "connect-mongo";
+import { errorHandler } from "./middlewares/errorHandler.js";
 
-  // Configuração do __dirname para ES Modules
-  const __filename = fileURLToPath(import.meta.url);
-  const __dirname = path.dirname(__filename);
+dotenv.config();
 
-  const app = express();
-  const PORT = 3000;
+const app = express();
+const PORT = 3000;
 
-  // Middlewares para processar JSON e forms
-  app.use(express.urlencoded({ extended: true }));
-  app.use(express.json());
+const secretSession = process.env.SECRET_SESSION;
 
-  // Arquivos estáticos
-  app.use(express.static(path.join(__dirname, "public")));
+app.use(helmet());
 
-  // Configuração do Handlebars
-  app.engine(
-    "handlebars",
-    exphbs.engine({
-      defaultLayout: "main",
-      layoutsDir: path.join(__dirname, "views/layouts"),
-    })
-  );
-  app.set("view engine", "handlebars");
-  app.set("views", path.join(__dirname, "views"));
+app.use(session({
+  secret: secretSession,
+  resave: false,
+  saveUninitialized: false,
+  store: MongoStore.create({
+    mongoUrl: process.env.MONGO_URL,
+    dbName: "idea_manager",
+    collectionName: "sessions"
+  }),
+  cookie: {
+    maxAge: 1000 * 60 * 60 
+  }
+}));
 
-  // Rotas
-  app.use("/ideas", ideaRoutes);
-  app.use("/login", authRoutes);
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-  // Redireciona raiz para login
-  app.get("/", (req, res) => res.redirect("/login"));
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 
-  connectDB();
+app.use(express.static(path.join(__dirname, "public")));
 
-  // Inicia servidor
-  app.listen(PORT, () => {
-    console.log(`Servidor rodando em http://localhost:${PORT}`);
-  });
+app.engine(
+  "handlebars",
+  exphbs.engine({
+    defaultLayout: "main",
+    layoutsDir: path.join(__dirname, "views/layouts"),
+  })
+);
+app.set("view engine", "handlebars");
+app.set("views", path.join(__dirname, "views"));
+
+app.use("/", authRoutes);
+app.use("/ideas", ideaRoutes);
+app.use("/votes", voteRoutes);
+
+app.get("/", (req, res) => res.redirect("/login"));
+
+import { errorHandler } from "./middlewares/errorHandler.js";
+
+app.use(errorHandler);
+
+
+connectDB();
+
+app.listen(PORT, () => {
+  console.log(`Servidor rodando em http://localhost:${PORT}`);
+});
