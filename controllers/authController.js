@@ -1,20 +1,31 @@
 import User from "../models/User.js";
-import bcrypt from "bcryptjs"; 
+import bcrypt from "bcryptjs";
 
 const authController = {
+  // Registrar novo usuário
   async register(req, res) {
     try {
-      const { nome, username, email, password } = req.body;
+      const { name, username, email, password } = req.body;
 
+      // Verifica se usuário ou email já existe
       const existingUser = await User.findOne({ $or: [{ email }, { username }] });
       if (existingUser) {
         return res.status(400).send("Usuário ou email já existe!");
       }
 
+      // Cria hash da senha
       const salt = await bcrypt.genSalt(10);
-      const senhaHash = await bcrypt.hash(password, salt);
+      const passwordHash = await bcrypt.hash(password, salt);
 
-      const newUser = new User({ nome, username, email, senhaHash });
+      // Cria novo usuário
+      const newUser = new User({
+        name,
+        username,
+        email,
+        passwordHash,
+        createdAt: Date.now(),
+      });
+
       await newUser.save();
 
       res.redirect("/ideas");
@@ -24,6 +35,7 @@ const authController = {
     }
   },
 
+  // Login de usuário
   async login(req, res) {
     try {
       const { email, password } = req.body;
@@ -33,7 +45,7 @@ const authController = {
         return res.status(400).send("Email ou senha incorretos.");
       }
 
-      const isMatch = await bcrypt.compare(password, user.senhaHash);
+      const isMatch = await bcrypt.compare(password, user.passwordHash);
       if (!isMatch) {
         return res.status(400).send("Email ou senha incorretos.");
       }
@@ -47,6 +59,11 @@ const authController = {
     }
   },
 
+  logout(req, res) {
+    req.session.destroy(() => {
+      res.redirect("/login");
+    });
+  }
 };
 
 export default authController;
