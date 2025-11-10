@@ -7,19 +7,21 @@ const ideaController = {
       const ideas = await Idea.find().sort({ createdAt: -1 }).lean();
 
       for (let idea of ideas) {
-        const totalVotes = await Vote.countDocuments({ ideaId: idea._id });
-        idea.totalVotes = totalVotes;
+        const likes = await Vote.countDocuments({ ideaId: idea._id, type: "like" });
+        const dislikes = await Vote.countDocuments({ ideaId: idea._id, type: "dislike" });
+        idea.likes = likes;
+        idea.dislikes = dislikes;
       }
 
-      res.render("ideas/list", { ideas });
+      res.render("ideas/list", { ideas, user: req.user });
     } catch (err) {
-      console.error("Erro ao listar ideias:", err);
+      console.error(err);
       res.status(500).send("Erro ao carregar ideias.");
     }
   },
 
   createIdea(req, res) {
-    res.render("ideas/create");
+    res.render("ideas/create", { user: req.user });
   },
 
   async saveIdea(req, res) {
@@ -30,13 +32,13 @@ const ideaController = {
         title,
         description,
         category,
-        author: req.user?._id || null, 
+        createdBy: req.user._id,
       });
 
       await newIdea.save();
       res.redirect("/ideas");
     } catch (err) {
-      console.error("❌ Erro ao criar ideia:", err);
+      console.error(err);
       res.status(500).send("Erro ao criar ideia.");
     }
   },
@@ -44,18 +46,18 @@ const ideaController = {
   async ideaDetails(req, res) {
     try {
       const { id } = req.params;
+      const idea = await Idea.findById(id).populate("createdBy", "username").lean();
 
-      const idea = await Idea.findById(id)
-        .populate("author", "username")
-        .lean();
+      if (!idea) return res.status(404).send("Ideia não encontrada");
 
-      if (!idea) return res.status(404).send("Ideia não encontrada.");
+      const likes = await Vote.countDocuments({ ideaId: id, type: "like" });
+      const dislikes = await Vote.countDocuments({ ideaId: id, type: "dislike" });
+      idea.likes = likes;
+      idea.dislikes = dislikes;
 
-      const totalVotes = await Vote.countDocuments({ ideaId: id });
-
-      res.render("ideas/details", { idea, totalVotes });
+      res.render("ideas/details", { idea, user: req.user });
     } catch (err) {
-      console.error("❌ Erro ao carregar detalhes da ideia:", err);
+      console.error(err);
       res.status(500).send("Erro ao carregar detalhes da ideia.");
     }
   },
