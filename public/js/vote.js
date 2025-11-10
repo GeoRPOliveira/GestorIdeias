@@ -1,4 +1,3 @@
-// public/js/votes.js
 document.addEventListener("DOMContentLoaded", () => {
   document.querySelectorAll(".ideaCard img[data-type]").forEach(img => {
     img.addEventListener("click", async (e) => {
