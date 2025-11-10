@@ -15,11 +15,11 @@ router.post("/create", isLoggedIn, ideaController.saveIdea);
 
 router.get("/:id", isLoggedIn, ideaController.ideaDetails);
 
-router.get("/:id/edit", isLoggedIn, isAuthor, ideaController.editIdea);
+// router.get("/:id/edit", isLoggedIn, isAuthor, ideaController.editIdea);
 
-router.post("/:id/edit", isLoggedIn, isAuthor, ideaController.updateIdea);
+// router.post("/:id/edit", isLoggedIn, isAuthor, ideaController.updateIdea);
 
-router.post("/:id/delete", isLoggedIn, isAuthor, ideaController.deleteIdea);
+// router.post("/:id/delete", isLoggedIn, isAuthor, ideaController.deleteIdea);
 
 router.get("", ideaController.showIdeas)
 
