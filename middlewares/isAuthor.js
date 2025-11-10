@@ -1,4 +1,3 @@
-// middlewares/isAuthor.js
 import Idea from "../models/Idea.js";
 
 export async function isAuthor(req, res, next) {
@@ -9,7 +8,6 @@ export async function isAuthor(req, res, next) {
       return res.status(404).send("Ideia não encontrada.");
     }
 
-    // Verifica se o autor é o usuário logado
     if (idea.author.toString() !== req.session.userId) {
       return res.status(403).send("Acesso negado. Você não é o autor desta ideia.");
     }

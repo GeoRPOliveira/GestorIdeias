@@ -59,10 +59,7 @@ app.use("/votes", voteRoutes);
 
 app.get("/", (req, res) => res.redirect("/login"));
 
-import { errorHandler } from "./middlewares/errorHandler.js";
-
 app.use(errorHandler);
-
 
 connectDB();
 
