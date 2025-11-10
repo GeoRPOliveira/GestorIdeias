@@ -7,10 +7,10 @@ const ideaController = {
       const ideas = await Idea.find().sort({ createdAt: -1 }).lean();
 
       for (let idea of ideas) {
-        const likes = await Vote.countDocuments({ ideaId: idea._id, type: "like" });
-        const dislikes = await Vote.countDocuments({ ideaId: idea._id, type: "dislike" });
-        idea.likes = likes;
-        idea.dislikes = dislikes;
+        const votes = await Vote.find({ ideaId: idea._id }).populate('userId', 'username').lean();
+
+        idea.likes = votes.filter(v => v.type === 'like').map(v => v.userId.username);
+        idea.dislikes = votes.filter(v => v.type === 'dislike').map(v => v.userId.username);
       }
 
       res.render("ideas/list", { ideas, user: req.user });
@@ -19,6 +19,7 @@ const ideaController = {
       res.status(500).send("Erro ao carregar ideias.");
     }
   },
+
 
   createIdea(req, res) {
     res.render("ideas/create", { user: req.user });
@@ -51,10 +52,10 @@ const ideaController = {
 
       if (!idea) return res.status(404).send("Ideia não encontrada");
 
-      const likes = await Vote.countDocuments({ ideaId: id, type: "like" });
-      const dislikes = await Vote.countDocuments({ ideaId: id, type: "dislike" });
-      idea.likes = likes;
-      idea.dislikes = dislikes;
+      const votes = await Vote.find({ ideaId: id }).populate('userId', 'username').lean();
+
+      idea.likes = votes.filter(v => v.type === 'like').map(v => v.userId.username);
+      idea.dislikes = votes.filter(v => v.type === 'dislike').map(v => v.userId.username);
 
       res.render("ideas/details", { idea, user: req.user });
     } catch (err) {
@@ -62,6 +63,7 @@ const ideaController = {
       res.status(500).send("Erro ao carregar detalhes da ideia.");
     }
   },
+
 };
 
 export default ideaController;

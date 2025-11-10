@@ -1,52 +1,31 @@
-import Idea from "../models/Idea.js";
+import Vote from "../models/Vote.js";
 
 const voteController = {
   async voteIdea(req, res) {
     try {
-      const { id } = req.params;
-      const userId = req.session.userId; 
-
-      const idea = await Idea.findById(id);
-      if (!idea) {
-        return res.status(404).send("Ideia não encontrada.");
-      }
-
-      if (idea.votes.includes(userId)) {
-        return res.redirect(`/ideas/${id}`);
-      }
-
-      idea.votes.push(userId);
-      await idea.save();
-
-      console.log(`✅ Usuário ${userId} votou na ideia ${id}`);
-      res.redirect(`/ideas/${id}`);
-    } catch (err) {
-      console.error("❌ Erro ao votar:", err);
-      res.status(500).send("Erro ao registrar voto.");
-    }
-  },
-
-  async unvoteIdea(req, res) {
-    try {
-      const { id } = req.params;
+      const { ideaId } = req.params;
+      const { type } = req.body;
       const userId = req.session.userId;
 
-      const idea = await Idea.findById(id);
-      if (!idea) {
-        return res.status(404).send("Ideia não encontrada.");
+      // Evita votos duplicados
+      let vote = await Vote.findOne({ ideaId, userId });
+
+      if (vote) {
+        vote.type = type; // atualiza se tipo diferente
+        await vote.save();
+      } else {
+        vote = await Vote.create({ ideaId, userId, type });
       }
 
-      idea.votes = idea.votes.filter(
-        (voterId) => voterId.toString() !== userId.toString()
-      );
+      // Retorna votos atualizados com usernames
+      const votes = await Vote.find({ ideaId }).populate("userId", "username").lean();
+      const likes = votes.filter(v => v.type === "like").map(v => v.userId.username);
+      const dislikes = votes.filter(v => v.type === "dislike").map(v => v.userId.username);
 
-      await idea.save();
-
-      console.log(`🔄 Usuário ${userId} removeu voto da ideia ${id}`);
-      res.redirect(`/ideas/${id}`);
+      res.json({ message: "Voto computado!", likes, dislikes });
     } catch (err) {
-      console.error("❌ Erro ao remover voto:", err);
-      res.status(500).send("Erro ao remover voto.");
+      console.error("Erro ao registrar voto:", err);
+      res.status(500).json({ message: "Erro ao registrar voto" });
     }
   },
 
@@ -54,7 +33,7 @@ const voteController = {
     try {
       const userId = req.session.userId;
 
-      const votedIdeas = await Idea.find({ votes: userId });
+      const votedIdeas = await Vote.find({ userId }).populate("ideaId").lean();
 
       res.render("votes/myVotes", { votedIdeas });
     } catch (err) {
