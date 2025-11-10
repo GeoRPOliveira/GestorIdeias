@@ -30,8 +30,9 @@ const ideaController = {
         title,
         description,
         category,
-        author: req.user?._id || null, 
       });
+
+      console.log("NOVA IDEIA: ",newIdea);
 
       await newIdea.save();
       res.redirect("/ideas");
