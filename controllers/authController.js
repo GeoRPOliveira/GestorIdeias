@@ -2,22 +2,18 @@ import User from "../models/User.js";
 import bcrypt from "bcryptjs";
 
 const authController = {
-  // Registrar novo usuário
   async register(req, res) {
     try {
       const { name, username, email, password } = req.body;
 
-      // Verifica se usuário ou email já existe
       const existingUser = await User.findOne({ $or: [{ email }, { username }] });
       if (existingUser) {
         return res.status(400).send("Usuário ou email já existe!");
       }
 
-      // Cria hash da senha
       const salt = await bcrypt.genSalt(10);
       const passwordHash = await bcrypt.hash(password, salt);
 
-      // Cria novo usuário
       const newUser = new User({
         name,
         username,
@@ -35,7 +31,6 @@ const authController = {
     }
   },
 
-  // Login de usuário
   async login(req, res) {
     try {
       const { email, password } = req.body;
