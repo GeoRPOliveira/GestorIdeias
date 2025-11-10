@@ -36,6 +36,7 @@ const ideaController = {
         createdBy: req.user?._id || null,
       });
 
+      console.log("newIdea:", newIdea);
 
       await newIdea.save();
       res.redirect("/ideas");
