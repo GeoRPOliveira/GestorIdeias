@@ -1,11 +1,9 @@
 import Idea from "../models/Idea.js";
 
 const ideaController = {
-  // Listar todas as ideias
   async showIdeas(req, res) {
     try {
       const ideas = await Idea.find().sort({ createdAt: -1 }).lean();
-      console.log("IDEIAS ENCONTRADAS:", ideas); // DEBUG
       res.render("ideas/list", { ideas });
     } catch (err) {
       console.error(err);
@@ -13,12 +11,10 @@ const ideaController = {
     }
   },
 
-  // Renderizar formulário de criação
   createIdea(req, res) {
     res.render("ideas/create");
   },
 
-  // Salvar nova ideia
   async saveIdea(req, res) {
     try {
       const { title, description, category } = req.body;
@@ -38,7 +34,6 @@ const ideaController = {
     }
   },
 
-  // Detalhes de uma ideia
   async ideaDetails(req, res) {
     try {
       const { id } = req.params;
