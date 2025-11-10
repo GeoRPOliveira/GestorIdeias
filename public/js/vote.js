@@ -1,0 +1,28 @@
+// public/js/votes.js
+document.addEventListener("DOMContentLoaded", () => {
+  document.querySelectorAll(".ideaCard img[data-type]").forEach(img => {
+    img.addEventListener("click", async (e) => {
+      const card = e.target.closest(".ideaCard");
+      const ideaId = card.dataset.id;
+      const type = e.target.dataset.type;
+
+      try {
+        const res = await fetch(`/votes/${ideaId}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ type })
+        });
+        const data = await res.json();
+
+        if (res.ok) {
+          const voteCountEl = card.querySelector(".voteCount");
+          voteCountEl.textContent = `${data.likes} 👍 | ${data.dislikes} 👎`;
+        } else {
+          alert(data.message);
+        }
+      } catch (err) {
+        console.error("Erro ao votar:", err);
+      }
+    });
+  });
+});

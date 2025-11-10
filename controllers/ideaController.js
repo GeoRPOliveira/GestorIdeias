@@ -32,8 +32,9 @@ const ideaController = {
         title,
         description,
         category,
-        createdBy: req.user._id,
+        createdBy: req.user?._id || null,
       });
+
 
       await newIdea.save();
       res.redirect("/ideas");
