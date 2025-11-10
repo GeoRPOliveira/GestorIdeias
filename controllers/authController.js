@@ -45,7 +45,11 @@ const authController = {
         return res.status(400).send("Email ou senha incorretos.");
       }
 
-      req.session.userId = user._id;
+      req.session.user = {
+        id: user._id,
+        name: user.name,
+        username: user.username
+      };
 
       res.redirect("/ideas");
     } catch (err) {

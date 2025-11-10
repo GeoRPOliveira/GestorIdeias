@@ -16,7 +16,6 @@ dotenv.config();
 
 const app = express();
 const PORT = 3000;
-
 const secretSession = process.env.SECRET_SESSION;
 
 app.use(helmet());
@@ -40,6 +39,13 @@ const __dirname = path.dirname(__filename);
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+
+// Disponibiliza o user para todas as views
+app.use((req, res, next) => {
+  console.log(">>> Sessão atual:", req.session.user);
+  res.locals.user = req.session.user || null;
+  next();
+});
 
 app.use(express.static(path.join(__dirname, "public")));
 
