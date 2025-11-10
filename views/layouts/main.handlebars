@@ -10,12 +10,12 @@
   <header>
     <div class="divHeader">
       <img src="images/logoInstituto.svg" alt="Logo Instituto">
-      <div>
-        <div>
-          <h3>{{user.name}}</h3>
-          <p>{{user.username}}</p>
-        </div>
+      <div class="divUser">
+        <p> {{user.username}}</p>
         <img src="images/person.svg" alt="person" id="person">
+        <a href="/ideas/create" id="addIdea">
+          <button>Adicionar Ideia</button>
+        </a>
       </div>
     </div>
     <div class="divTitle">

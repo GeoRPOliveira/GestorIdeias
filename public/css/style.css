@@ -97,7 +97,7 @@ input, textarea {
 /* Botão */
 button {
     padding: 0.8rem;
-    background-color: #001EC5;
+    background-color: #1976D2;
     border: none;
     border-radius: 8px;
     color: white;
@@ -107,8 +107,17 @@ button {
     width: 10rem;
 }
 
+.divUser{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
+    margin-right: 1rem;
+    width: 22vw;
+}
+
 button:hover {
-    background-color: #1976D2;
+    background-color: #001EC5;
 }
 
 /* Link de registro */
