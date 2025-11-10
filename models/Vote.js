@@ -1,16 +1,26 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
 const voteSchema = new mongoose.Schema({
   ideaId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Idea',
-    required: true
+    ref: "Idea",
+    required: true,
   },
   userId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    required: true
-  }
+    ref: "User",
+    required: true,
+  },
+  type: {
+    type: String,
+    enum: ["like", "dislike"],
+    required: true,
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
 });
 
-export default mongoose.model('Vote', voteSchema);
+const Vote = mongoose.model("Vote", voteSchema);
+export default Vote;

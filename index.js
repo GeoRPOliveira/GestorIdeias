@@ -19,6 +19,7 @@ const PORT = 3000;
 const secretSession = process.env.SECRET_SESSION;
 
 app.use(helmet());
+app.disable("x-powered-by");
 
 app.use(session({
   secret: secretSession,
