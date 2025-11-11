@@ -24,7 +24,7 @@ const authController = {
 
       await newUser.save();
 
-      res.redirect("/ideas");
+      res.redirect("/idea");
     } catch (err) {
       console.error(err);
       res.status(500).send("Erro ao registrar usuário.");
@@ -51,7 +51,7 @@ const authController = {
         username: user.username
       };
 
-      res.redirect("/ideas");
+      res.redirect("/idea");
     } catch (err) {
       console.error(err);
       res.status(500).send("Erro ao fazer login.");

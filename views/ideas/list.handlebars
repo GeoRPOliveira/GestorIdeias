@@ -3,7 +3,8 @@
     {{#each ideas}}
       <li class="ideaCard" data-id="{{this._id}}">
         <h3>{{this.title}}</h3>
-        <h5 class="voteCount">{{this.likes.length}} voto(s)</h5>
+        <h5 class="voteCount">
+      👍 {{this.likes.length}} | 👎 {{this.dislikes.length}}</h5>
         <hr />
         <p>{{this.description}}</p>
         <div class="info">

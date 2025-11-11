@@ -2,7 +2,7 @@ import express from "express";
 import exphbs from "express-handlebars";
 import authRoutes from "./routes/authRoutes.js";
 import ideaRoutes from "./routes/ideaRoutes.js";
-import voteRoutes from "./routes/voteRoutes.js";
+import voteRoutes from "./routes/voteRoutes.js"
 import path from "path";
 import { fileURLToPath } from "url";
 import { connectDB } from "./db/conn.js";
@@ -60,8 +60,13 @@ app.engine(
 app.set("view engine", "handlebars");
 app.set("views", path.join(__dirname, "views"));
 
+app.use((req, res, next) => {
+  console.log(`➡️ Requisição recebida: ${req.method} ${req.url}`);
+  next();
+});
+
 app.use("/", authRoutes);
-app.use("/ideas", ideaRoutes);
+app.use("/idea", ideaRoutes);
 app.use("/votes", voteRoutes);
 
 app.get("/", (req, res) => res.redirect("/login"));

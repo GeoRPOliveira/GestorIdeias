@@ -7,11 +7,10 @@ const voteController = {
       const { type } = req.body;
       const userId = req.session.userId;
 
-      // Evita votos duplicados
       let vote = await Vote.findOne({ ideaId, userId });
 
       if (vote) {
-        vote.type = type; // atualiza se tipo diferente
+        vote.type = type; 
         await vote.save();
       } else {
         vote = await Vote.create({ ideaId, userId, type });
@@ -31,7 +30,7 @@ const voteController = {
 
   async listUserVotes(req, res) {
     try {
-      const userId = req.session.userId;
+      const userId = req.session.user?._id;
 
       const votedIdeas = await Vote.find({ userId }).populate("ideaId").lean();
 

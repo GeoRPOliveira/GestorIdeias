@@ -39,7 +39,7 @@ const ideaController = {
       console.log("newIdea:", newIdea);
 
       await newIdea.save();
-      res.redirect("/ideas");
+      res.redirect("/idea");
     } catch (err) {
       console.error(err);
       res.status(500).send("Erro ao criar ideia.");
@@ -64,6 +64,42 @@ const ideaController = {
       res.status(500).send("Erro ao carregar detalhes da ideia.");
     }
   },
+
+    async voteIdea(req, res) {
+    try {
+      const { type } = req.body; 
+      const ideaId = req.params.id;
+      const userId = req.user._id;
+
+      if (!req.user) {
+        return res.status(401).json({ success: false, message: "Usuário não autenticado" });
+      }
+
+      const existingVote = await Vote.findOne({ ideaId, userId });
+
+      if (existingVote) {
+        if (existingVote.type === type) {
+          await Vote.deleteOne({ _id: existingVote._id });
+        } else {
+          existingVote.type = type;
+          await existingVote.save();
+        }
+      } else {
+        const newVote = new Vote({ ideaId, userId, type });
+        await newVote.save();
+      }
+
+      const votes = await Vote.find({ ideaId }).lean();
+      const likeCount = votes.filter(v => v.type === "like").length;
+      const dislikeCount = votes.filter(v => v.type === "dislike").length;
+
+      res.json({ success: true, likeCount, dislikeCount });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ success: false, message: "Erro ao votar" });
+    }
+  },
+
 
 };
 

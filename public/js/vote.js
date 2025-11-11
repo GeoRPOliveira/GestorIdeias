@@ -1,27 +1,33 @@
-document.addEventListener("DOMContentLoaded", () => {
-  document.querySelectorAll(".ideaCard img[data-type]").forEach(img => {
-    img.addEventListener("click", async (e) => {
-      const card = e.target.closest(".ideaCard");
-      const ideaId = card.dataset.id;
-      const type = e.target.dataset.type;
+console.log("Script de votos carregado!");
 
+document.addEventListener("DOMContentLoaded", () => {
+  document.querySelectorAll(".ideaCard").forEach(card => {
+    const ideaId = card.dataset.id;
+    const likeBtn = card.querySelector(".like");
+    const dislikeBtn = card.querySelector(".dislike");
+    const voteCount = card.querySelector(".voteCount");
+
+    async function sendVote(type) {
       try {
-        const res = await fetch(`/votes/${ideaId}`, {
+        const res = await fetch(`/votes/${ideaId}/vote`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ type })
+          body: JSON.stringify({ type }),
         });
-        const data = await res.json();
 
-        if (res.ok) {
-          const voteCountEl = card.querySelector(".voteCount");
-          voteCountEl.textContent = `${data.likes} 👍 | ${data.dislikes} 👎`;
+        const data = await res.json();
+        if (data.success) {
+          voteCount.textContent = `👍 ${data.likeCount} | 👎 ${data.dislikeCount}`;
         } else {
-          alert(data.message);
+          alert(data.message || "Erro ao votar");
         }
       } catch (err) {
-        console.error("Erro ao votar:", err);
+        console.error(err);
+        alert("Erro ao enviar voto");
       }
-    });
+    }
+
+    likeBtn.addEventListener("click", () => sendVote("like"));
+    dislikeBtn.addEventListener("click", () => sendVote("dislike"));
   });
 });

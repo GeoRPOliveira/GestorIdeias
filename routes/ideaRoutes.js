@@ -15,6 +15,9 @@ router.post("/create", isLoggedIn, ideaController.saveIdea);
 
 router.get("/:id", isLoggedIn, ideaController.ideaDetails);
 
+router.post("/:id/vote", isLoggedIn, ideaController.voteIdea);
+
+
 // router.get("/:id/edit", isLoggedIn, isAuthor, ideaController.editIdea);
 
 // router.post("/:id/edit", isLoggedIn, isAuthor, ideaController.updateIdea);
